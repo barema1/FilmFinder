@@ -96,9 +96,11 @@ function App() {
         <SearchBar onSearch={handleSearch} />
 
         <main className="mt-12">
-          <h2 className="text-2xl mb-8 text-gray-500 text-left pl-4 border-l-4 border-[#7f5af0]">
-            {loading ? 'Searching...' : `Results for "${currentCategory}"`}
-          </h2>
+          {(loading || movies.length > 0) && (
+            <h2 className="text-2xl mb-8 text-gray-500 text-left pl-4 border-l-4 border-[#7f5af0] fade-in">
+              {loading ? 'Searching...' : `Results for "${searchTerm}"`}
+            </h2>
+          )}
 
           <MovieList movies={movies} loading={loading} error={error} />
         </main>
