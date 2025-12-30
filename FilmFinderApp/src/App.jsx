@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CategorySelector from './components/CategorySelector';
+import Navbar from './components/Navbar';
 // import SearchBar from './components/SearchBar';
 // import MovieList from './pages/MovieList';
 
@@ -15,10 +15,12 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen text-white pt-20">
-      <div className="container mx-auto max-w-4xl text-center px-4">
+    <div className="min-h-screen bg-[#16161a] text-white">
+      <Navbar onCategorySelect={handleCategorySelect} />
 
-        {/* Hero Text matching your design */}
+      <div className="container mx-auto max-w-4xl text-center pt-32 px-4">
+
+        {/* Hero Text */}
         <h1 className="text-6xl font-extrabold text-[#7f5af0] mb-2">
           Find Movies & Anime
         </h1>
@@ -28,9 +30,6 @@ function App() {
 
         {/* Placeholder for SearchBar */}
         {/* <SearchBar /> */}
-
-        {/* Category Selector */}
-        <CategorySelector onSelect={handleCategorySelect} />
 
         <p className="text-gray-400 mt-8 text-lg">
           Discover your next favorite title. Search, explore, and enjoy.
