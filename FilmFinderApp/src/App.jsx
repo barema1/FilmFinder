@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
-// import SearchBar from './components/SearchBar';
+import SearchBar from './components/SearchBar';
 // import MovieList from './pages/MovieList';
 
 function App() {
@@ -12,6 +12,11 @@ function App() {
     // Reset search term or logic when category changes, if desired
     setSearchTerm('');
     console.log(`Switched to category: ${category}`);
+  };
+
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    console.log(`Searching for: ${term} in ${currentCategory}`);
   };
 
   return (
@@ -28,8 +33,8 @@ function App() {
           Instantly
         </p>
 
-        {/* Placeholder for SearchBar */}
-        {/* <SearchBar /> */}
+        {/* SearchBar */}
+        <SearchBar onSearch={handleSearch} />
 
         <p className="text-gray-400 mt-8 text-lg">
           Discover your next favorite title. Search, explore, and enjoy.
