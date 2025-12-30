@@ -78,7 +78,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#16161a] text-white">
+    <div className="min-h-screen text-white">
       <Navbar onCategorySelect={handleCategorySelect} />
 
       <Routes>
