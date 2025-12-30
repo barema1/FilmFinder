@@ -19,17 +19,41 @@ function App() {
   };
 
   const handleSearch = async (term) => {
+    if (!term) return;
+
     setSearchTerm(term);
     setLoading(true);
     setError('');
+    setMovies([]);
 
-    // TODO: Implement API fetching in next steps
-    console.log(`Searching for: ${term} in ${currentCategory}`);
+    if (currentCategory === 'Movies') {
+      const apiKey = import.meta.env.VITE_OMDB_API_KEY;
+      if (!apiKey) {
+        setError('Missing API Key. Please add VITE_OMDB_API_KEY to your .env file.');
+        setLoading(false);
+        return;
+      }
 
-    // Simulate loading for now
-    setTimeout(() => {
+      try {
+        const response = await fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${term}&type=movie`);
+        const data = await response.json();
+
+        if (data.Response === 'True') {
+          setMovies(data.Search);
+        } else {
+          setError(data.Error || 'No movies found.');
+        }
+      } catch (err) {
+        setError('Failed to fetch movies. Please try again.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Anime search placeholder (Step 10)
+      console.log('Anime search not implemented yet');
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
