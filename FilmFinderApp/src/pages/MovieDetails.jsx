@@ -1,0 +1,117 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
+import ErrorMessage from '../components/ErrorMessage';
+
+const MovieDetails = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [movie, setMovie] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    // Placeholder for fetch logic (Step 14)
+    useEffect(() => {
+        // Simulate fetch for layout testing
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            // We will replace this with real data later
+            setMovie({
+                Title: 'Inception',
+                Year: '2010',
+                Poster: 'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg',
+                Plot: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
+                imdbRating: '8.8',
+                Genre: 'Action, Adventure, Sci-Fi',
+                Director: 'Christopher Nolan',
+                Actors: 'Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page'
+            });
+        }, 1000);
+    }, [id]);
+
+    if (loading) return <div className="min-h-screen pt-20"><Loader /></div>;
+    if (error) return <div className="min-h-screen pt-20"><ErrorMessage message={error} /></div>;
+    if (!movie) return null;
+
+    return (
+        <div className="min-h-screen bg-[#16161a] text-white pt-24 px-4 pb-12">
+            <div className="container mx-auto max-w-6xl">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="mb-8 text-gray-400 hover:text-[#7f5af0] transition-colors flex items-center gap-2 group"
+                >
+                    <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Search
+                </button>
+
+                <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
+                    {/* Poster Section */}
+                    <div className="w-full md:w-1/3 lg:w-1/4">
+                        <div className="rounded-xl overflow-hidden shadow-2xl skew-y-0 hover:skew-y-1 transition-transform duration-500 ease-out">
+                            <img
+                                src={movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/400x600'}
+                                alt={movie.Title}
+                                className="w-full h-auto object-cover"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="w-full md:w-2/3 lg:w-3/4">
+                        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-white tracking-tight">
+                            {movie.Title}
+                            <span className="text-2xl text-gray-500 font-normal ml-3">({movie.Year})</span>
+                        </h1>
+
+                        <div className="flex flex-wrap gap-3 mb-8">
+                            {movie.Genre.split(',').map((genre, i) => (
+                                <span key={i} className="px-3 py-1 bg-[#242629] border border-[#7f5af0] text-[#7f5af0] text-sm rounded-full">
+                                    {genre.trim()}
+                                </span>
+                            ))}
+
+                            {movie.imdbRating && (
+                                <span className="px-3 py-1 bg-yellow-500 bg-opacity-10 border border-yellow-500 text-yellow-500 text-sm rounded-full flex items-center gap-1">
+                                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" /></svg>
+                                    {movie.imdbRating} / 10
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="mb-8 p-6 bg-[#242629] rounded-xl border-l-4 border-[#7f5af0]">
+                            <h3 className="text-xl font-bold mb-3 text-white">Plot Summary</h3>
+                            <p className="text-gray-300 leading-relaxed text-lg">
+                                {movie.Plot}
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-400 mb-2 uppercase tracking-wide">Cast</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {movie.Actors.split(',').map((actor, i) => (
+                                        <span key={i} className="text-white bg-[#1a1a1a] px-3 py-2 rounded-lg">
+                                            {actor.trim()}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {movie.Director && (
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-400 mb-2 uppercase tracking-wide">Director</h3>
+                                    <p className="text-white text-lg">{movie.Director}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default MovieDetails;
