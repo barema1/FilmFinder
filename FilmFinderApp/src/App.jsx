@@ -50,9 +50,29 @@ function App() {
         setLoading(false);
       }
     } else {
-      // Anime search placeholder (Step 10)
-      console.log('Anime search not implemented yet');
-      setLoading(false);
+      // Jikan API for Anime
+      try {
+        const response = await fetch(`https://api.jikan.moe/v4/anime?q=${term}&sfw`);
+        const data = await response.json();
+
+        if (data.data && data.data.length > 0) {
+          const animeList = data.data.map(anime => ({
+            Title: anime.title,
+            Poster: anime.images.jpg.large_image_url,
+            Year: anime.year || (anime.aired?.string ? anime.aired.string.split(',')[1]?.trim() : 'N/A'),
+            Type: 'Anime',
+            imdbID: anime.mal_id
+          }));
+          setMovies(animeList);
+        } else {
+          setError('No anime found.');
+        }
+      } catch (err) {
+        setError('Failed to fetch anime. Please try again.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
