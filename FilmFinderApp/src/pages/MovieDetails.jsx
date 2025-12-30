@@ -11,24 +11,64 @@ const MovieDetails = () => {
     const [error, setError] = useState('');
 
     // Placeholder for fetch logic (Step 14)
+    const { pathname } = window.location;
+    const isAnime = pathname.includes('/anime/');
+
     useEffect(() => {
-        // Simulate fetch for layout testing
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-            // We will replace this with real data later
-            setMovie({
-                Title: 'Inception',
-                Year: '2010',
-                Poster: 'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg',
-                Plot: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
-                imdbRating: '8.8',
-                Genre: 'Action, Adventure, Sci-Fi',
-                Director: 'Christopher Nolan',
-                Actors: 'Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page'
-            });
-        }, 1000);
-    }, [id]);
+        const fetchDetails = async () => {
+            setLoading(true);
+            setError('');
+
+            try {
+                let data = null;
+
+                if (isAnime) {
+                    const response = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+                    const json = await response.json();
+
+                    if (json.data) {
+                        const anime = json.data;
+                        data = {
+                            Title: anime.title,
+                            Year: anime.year || (anime.aired?.string ? anime.aired.string : 'N/A'),
+                            Poster: anime.images?.jpg?.large_image_url,
+                            Plot: anime.synopsis,
+                            imdbRating: anime.score,
+                            Genre: anime.genres?.map(g => g.name).join(', '),
+                            Director: anime.studios?.map(s => s.name).join(', '),
+                            Actors: 'Voice Actors data requires separate call'
+                        };
+                    } else {
+                        throw new Error('Anime not found');
+                    }
+
+                } else {
+                    // OMDB Fetch
+                    const apiKey = import.meta.env.VITE_OMDB_API_KEY;
+                    const response = await fetch(`https://www.omdbapi.com/?apikey=${apiKey}&i=${id}&plot=full`);
+                    const json = await response.json();
+
+                    if (json.Response === 'True') {
+                        data = json;
+                    } else {
+                        throw new Error(json.Error || 'Movie not found');
+                    }
+                }
+
+                setMovie(data);
+
+            } catch (err) {
+                console.error(err);
+                setError('Failed to load details. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchDetails();
+        }
+    }, [id, isAnime]);
 
     if (loading) return <div className="min-h-screen pt-20"><Loader /></div>;
     if (error) return <div className="min-h-screen pt-20"><ErrorMessage message={error} /></div>;

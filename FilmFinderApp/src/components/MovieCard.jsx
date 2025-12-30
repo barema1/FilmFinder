@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const MovieCard = ({ movie }) => {
     // Fallback for missing posters
@@ -7,8 +8,14 @@ const MovieCard = ({ movie }) => {
             ? movie.Poster
             : 'https://via.placeholder.com/400x600?text=No+Poster';
 
+    // Determine path based on Type (Anime vs Movie)
+    const typePath = movie.Type === 'Anime' ? 'anime' : 'movie';
+
     return (
-        <div className="bg-[#242629] rounded-xl overflow-hidden hover:scale-105 transition-transform duration-300 shadow-xl group cursor-pointer h-full flex flex-col">
+        <Link
+            to={`/${typePath}/${movie.imdbID}`}
+            className="bg-[#242629] rounded-xl overflow-hidden hover:scale-105 transition-transform duration-300 shadow-xl group cursor-pointer h-full flex flex-col block"
+        >
             <div className="relative aspect-[2/3] overflow-hidden">
                 <img
                     src={poster}
@@ -25,7 +32,7 @@ const MovieCard = ({ movie }) => {
                 </h3>
                 <span className="text-gray-400 text-sm">{movie.Year}</span>
             </div>
-        </div>
+        </Link>
     );
 };
 
