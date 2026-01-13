@@ -55,9 +55,19 @@ You must have [Node.js](https://nodejs.org/) installed on your machine.
     ```
 
 3.  **Setup API Keys (OMDb Only):**
-    * The OMDb API requires a free API key.
-    * Create a `.env` file in the root directory.
-    * Add your API key: `VITE_OMDB_API_KEY="your_api_key_here"`
+    * The OMDb API requires a free API key (Jikan API for anime is free and doesn't require a key).
+    * **Get your OMDb API key:**
+      1. Visit [https://www.omdbapi.com/apikey.aspx](https://www.omdbapi.com/apikey.aspx)
+      2. Choose the "FREE" plan (1,000 daily requests)
+      3. Enter your email address and verify it
+      4. You'll receive your API key via email
+    * **Create a `.env` file** in the `FilmFinderApp` directory (same level as `package.json`)
+    * **Add your API key** to the `.env` file:
+      ```
+      VITE_OMDB_API_KEY=your_actual_api_key_here
+      ```
+      ⚠️ **Important:** Replace `your_actual_api_key_here` with the actual key you received via email. Do NOT include quotes around the key value.
+    * **Note:** Make sure `.env` is in your `.gitignore` file to keep your API key secure (it should be by default)
 
 4.  **Run the Application:**
     ```bash

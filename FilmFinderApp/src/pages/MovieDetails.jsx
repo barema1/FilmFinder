@@ -10,7 +10,6 @@ const MovieDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // Placeholder for fetch logic (Step 14)
     const { pathname } = window.location;
     const isAnime = pathname.includes('/anime/');
 
@@ -30,20 +29,23 @@ const MovieDetails = () => {
                         const anime = json.data;
                         data = {
                             Title: anime.title,
-                            Year: anime.year || (anime.aired?.string ? anime.aired.string : 'N/A'),
-                            Poster: anime.images?.jpg?.large_image_url,
-                            Plot: anime.synopsis,
+                            Year: anime.year || (anime.aired?.string ? anime.aired.string.split(',')[0]?.trim() : 'N/A'),
+                            Poster: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+                            Plot: anime.synopsis || 'No synopsis available.',
                             imdbRating: anime.score,
-                            Genre: anime.genres?.map(g => g.name).join(', '),
-                            Director: anime.studios?.map(s => s.name).join(', '),
-                            Actors: 'Voice Actors data requires separate call'
+                            Genre: anime.genres?.map(g => g.name).join(', ') || 'N/A',
+                            Director: anime.studios?.map(s => s.name).join(', ') || 'N/A',
+                            Actors: anime.characters?.slice(0, 4).map(c => c.name).join(', ') || 'N/A',
+                            Runtime: anime.duration || null,
+                            Episodes: anime.episodes || null,
+                            Status: anime.status || null,
+                            Type: 'Anime'
                         };
                     } else {
                         throw new Error('Anime not found');
                     }
 
                 } else {
-                    // OMDB Fetch
                     const apiKey = import.meta.env.VITE_OMDB_API_KEY;
                     const response = await fetch(`https://www.omdbapi.com/?apikey=${apiKey}&i=${id}&plot=full`);
                     const json = await response.json();
@@ -88,7 +90,6 @@ const MovieDetails = () => {
                 </button>
 
                 <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
-                    {/* Poster Section */}
                     <div className="w-full md:w-1/3 lg:w-1/4">
                         <div className="rounded-xl overflow-hidden shadow-2xl skew-y-0 hover:skew-y-1 transition-transform duration-500 ease-out">
                             <img
@@ -99,15 +100,36 @@ const MovieDetails = () => {
                         </div>
                     </div>
 
-                    {/* Content Section */}
                     <div className="w-full md:w-2/3 lg:w-3/4">
                         <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-white tracking-tight">
                             {movie.Title}
                             <span className="text-2xl text-gray-500 font-normal ml-3">({movie.Year})</span>
                         </h1>
 
+                        {(movie.Episodes || movie.Status || movie.Runtime) && (
+                            <div className="flex flex-wrap gap-3 mb-4">
+                                {movie.Episodes && (
+                                    <span className="text-gray-400 text-sm">
+                                        {movie.Episodes} {movie.Episodes === 1 ? 'Episode' : 'Episodes'}
+                                    </span>
+                                )}
+                                {movie.Status && (
+                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                        movie.Status.toLowerCase().includes('completed') 
+                                            ? 'bg-green-500 bg-opacity-20 text-green-400 border border-green-500'
+                                            : 'bg-blue-500 bg-opacity-20 text-blue-400 border border-blue-500'
+                                    }`}>
+                                        {movie.Status}
+                                    </span>
+                                )}
+                                {movie.Runtime && movie.Runtime !== 'N/A' && (
+                                    <span className="text-gray-400 text-sm">{movie.Runtime}</span>
+                                )}
+                            </div>
+                        )}
+
                         <div className="flex flex-wrap gap-3 mb-8">
-                            {movie.Genre.split(',').map((genre, i) => (
+                            {movie.Genre && movie.Genre !== 'N/A' && movie.Genre.split(',').map((genre, i) => (
                                 <span key={i} className="px-3 py-1 bg-[#242629] border border-[#7f5af0] text-[#7f5af0] text-sm rounded-full">
                                     {genre.trim()}
                                 </span>
@@ -129,20 +151,26 @@ const MovieDetails = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <h3 className="text-lg font-bold text-gray-400 mb-2 uppercase tracking-wide">Cast</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {movie.Actors.split(',').map((actor, i) => (
-                                        <span key={i} className="text-white bg-[#1a1a1a] px-3 py-2 rounded-lg">
-                                            {actor.trim()}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {movie.Director && (
+                            {movie.Actors && movie.Actors !== 'N/A' && (
                                 <div>
-                                    <h3 className="text-lg font-bold text-gray-400 mb-2 uppercase tracking-wide">Director</h3>
+                                    <h3 className="text-lg font-bold text-gray-400 mb-2 uppercase tracking-wide">
+                                        {movie.Type === 'Anime' ? 'Characters' : 'Cast'}
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {movie.Actors.split(',').map((actor, i) => (
+                                            <span key={i} className="text-white bg-[#1a1a1a] px-3 py-2 rounded-lg">
+                                                {actor.trim()}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {movie.Director && movie.Director !== 'N/A' && (
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-400 mb-2 uppercase tracking-wide">
+                                        {movie.Type === 'Anime' ? 'Studio' : 'Director'}
+                                    </h3>
                                     <p className="text-white text-lg">{movie.Director}</p>
                                 </div>
                             )}

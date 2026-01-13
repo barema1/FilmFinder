@@ -1,28 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-function CategorySelector({ onSelect }) {
-  const [activeCategory, setActiveCategory] = useState('Movies');
-
-  const handleSelect = (category) => {
-    setActiveCategory(category);
-    onSelect(category); 
-  };
-
-  const baseStyle = "px-6 py-2 rounded-lg transition-colors duration-200 text-white font-semibold";
-  const activeStyle = "bg-[#7f5af0]"; 
-  const inactiveStyle = "bg-transparent border border-[#7f5af0] hover:bg-[#7f5af0] hover:bg-opacity-10";
+function CategorySelector({ onSelect, currentCategory = 'Movies' }) {
+  const baseStyle = "px-8 py-3 rounded-xl transition-all duration-200 text-white font-semibold text-base";
+  const activeStyle = "bg-gradient-to-r from-[#7f5af0] to-[#6846c9] shadow-lg shadow-[#7f5af0]/50"; 
+  const inactiveStyle = "bg-[#242629] border border-gray-700 hover:border-[#7f5af0] hover:bg-[#242629]";
 
   return (
     <div className="flex space-x-4">
       <button
-        className={`${baseStyle} ${activeCategory === 'Movies' ? activeStyle : inactiveStyle}`}
-        onClick={() => handleSelect('Movies')}
+        className={`${baseStyle} ${currentCategory === 'Movies' ? activeStyle : inactiveStyle}`}
+        onClick={() => onSelect('Movies')}
       >
         Movies
       </button>
       <button
-        className={`${baseStyle} ${activeCategory === 'Anime' ? activeStyle : inactiveStyle}`}
-        onClick={() => handleSelect('Anime')}
+        className={`${baseStyle} ${currentCategory === 'Anime' ? activeStyle : inactiveStyle}`}
+        onClick={() => onSelect('Anime')}
       >
         Anime
       </button>

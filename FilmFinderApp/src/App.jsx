@@ -19,6 +19,13 @@ function App() {
     console.log(`Switched to category: ${category}`);
   };
 
+  const handleReset = () => {
+    setSearchTerm('');
+    setMovies([]);
+    setError('');
+    setLoading(false);
+  };
+
   const handleSearch = async (term) => {
     if (!term) return;
 
@@ -51,7 +58,6 @@ function App() {
         setLoading(false);
       }
     } else {
-      // Jikan API for Anime
       try {
         const response = await fetch(`https://api.jikan.moe/v4/anime?q=${term}&sfw`);
         const data = await response.json();
@@ -59,10 +65,13 @@ function App() {
         if (data.data && data.data.length > 0) {
           const animeList = data.data.map(anime => ({
             Title: anime.title,
-            Poster: anime.images.jpg.large_image_url,
+            Poster: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
             Year: anime.year || (anime.aired?.string ? anime.aired.string.split(',')[1]?.trim() : 'N/A'),
             Type: 'Anime',
-            imdbID: anime.mal_id
+            imdbID: anime.mal_id,
+            imdbRating: anime.score || null,
+            Episodes: anime.episodes || null,
+            Status: anime.status || null
           }));
           setMovies(animeList);
         } else {
@@ -79,7 +88,7 @@ function App() {
 
   return (
     <div className="min-h-screen text-white">
-      <Navbar onCategorySelect={handleCategorySelect} />
+      <Navbar onReset={handleReset} />
 
       <Routes>
         <Route
@@ -92,6 +101,7 @@ function App() {
               loading={loading}
               error={error}
               onSearch={handleSearch}
+              onCategorySelect={handleCategorySelect}
             />
           }
         />
