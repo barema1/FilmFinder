@@ -45,7 +45,7 @@ You must have [Node.js](https://nodejs.org/) installed on your machine.
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [YOUR GITHUB REPO URL HERE]
+    git clone https://github.com/barema1/FilmFinder.git
     cd FilmFinderApp
     ```
 
